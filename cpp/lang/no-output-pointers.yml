@@ -1,0 +1,26 @@
+rules:
+  - id: no-output-pointers
+    languages:
+      - cpp
+    severity: ERROR
+    message: Prefer larger return types to output parameters, else use named types
+      with known ownership semantics such as; references, std::unique_ptr or
+      std::shared_ptr for single elements. For multiple elements use a view.
+    patterns:
+      - pattern-either:
+          - pattern: $_ $F(..., $TYPE* $A, ... ) { ... }
+          - pattern: $_ $F(..., $TYPE*, ... ) { ... }
+          - pattern: $_ $F(..., $TYPE* $A, ... );
+          - pattern: $_ $F(..., $TYPE*, ... );
+      - pattern-not: $_ $F(..., const $TYPE* $A, ... ) { ... }
+      - pattern-not: $_ $F(..., const $TYPE* $A, ... );
+    metadata:
+      cwe:
+        - CWE-130
+        - CWE-465
+      shortDescription: Avoid output pointers in C++ code
+      category: security
+      confidence: LOW
+      likelihood: LOW
+      impact: HIGH
+      references: https://www.akamai.com/blog/security-research/cve-2025-14847-all-you-need-to-know-about-mongobleed
