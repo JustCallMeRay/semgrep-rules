@@ -1,0 +1,18 @@
+rules:
+  - id: likely-unrequired-heap-alloc
+    languages:
+      - cpp
+    severity: WARNING
+    message: Prefer a stack allocation and use the address of (&) operator. If the class is large prefer it do the heap allocation instead.
+    pattern-either:
+      - pattern-either:
+          - patterns:
+              - pattern: $T1* $V = $MAKE(...); ... $F(..., $V.get(), ...);
+              - metavariable-regex:
+                  metavariable: $MAKE
+                  regex: (std::|boost::)?make_(unique|shared)
+      - pattern: $T1* $V = new $T2; ... $F(..., $V, ...); ... delete $V;
+    metadata:
+      shortDescription: Stack allocations can be expensive and are more likely to be leaked
+      category: performance
+      references: https://www.geeksforgeeks.org/dsa/stack-vs-heap-memory-allocation/
