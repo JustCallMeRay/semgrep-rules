@@ -1,0 +1,19 @@
+rules:
+  - id: never-return-pointers
+    languages:
+      - cpp
+    severity: ERROR
+    message: Prefer return types which have known ownership semantics to raw pointers such as references, std::unique_ptr or std::shared_ptr for single elements. For multiple elements use a view.
+    patterns:
+      - pattern-either:
+          - pattern: $_* $F(...) { ... }
+          - pattern: $_* $F(...);
+    metadata:
+      cwe:
+        - CWE-465
+      shortDescription: Avoid return pointers in C++ code, likely to leak memory
+      category: security
+      confidence: HIGH
+      likelihood: MEDIUM
+      impact: HIGH
+      references: https://owasp.org/www-community/vulnerabilities/Memory_leak
